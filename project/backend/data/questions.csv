@@ -1,0 +1,75 @@
+type,question,follow_up_trigger
+initial,Tell me about yourself,introduction
+initial,What made you interested in this field,introduction
+initial,Could you walk me through your background,introduction
+initial,What are your greatest strengths,strengths
+initial,What unique skills do you bring to this role,strengths
+initial,How do you stand out from other candidates,strengths
+initial,Where do you see yourself in 5 years,goals
+initial,What are your career aspirations,goals
+initial,What are your short-term and long-term goals,goals
+initial,Why do you want to work here,company
+initial,What interests you about our company,company
+initial,What do you know about our organization,company
+initial,How do you handle stress,stress
+initial,How do you work under pressure,stress
+initial,How do you manage tight deadlines,stress
+initial,Can you describe a difficult project you worked on,project
+initial,Tell me about your most challenging project,project
+initial,What's your biggest technical achievement,project
+initial,What motivates you in a job,motivation
+initial,What drives you to succeed,motivation
+initial,What aspects of work excite you most,motivation
+initial,Tell me about a time you worked in a team,teamwork
+initial,How do you collaborate with others,teamwork
+initial,How do you handle team conflicts,teamwork
+initial,Why did you leave your previous job,experience
+initial,What have you learned from past roles,experience
+initial,How has your experience prepared you,experience
+initial,Can you describe your leadership experience,leadership
+initial,How do you lead a team through challenges,leadership
+initial,Tell me about a time you showed initiative,leadership
+initial,How do you prioritize tasks,task_management
+initial,How do you organize your work,task_management
+initial,How do you handle multiple deadlines,task_management
+initial,What's your approach to problem-solving,problem_solving
+initial,How do you debug complex issues,problem_solving
+initial,How do you learn new technologies,learning
+initial,What's your learning strategy,learning
+follow_up,Can you elaborate more on your experience in this field,introduction
+follow_up,What specific skills have you developed in your career,introduction
+follow_up,How has your background influenced your career choice,introduction
+follow_up,Can you give specific examples of these strengths,strengths
+follow_up,How have you applied these skills in practice,strengths
+follow_up,Tell me about a time when your strengths made a difference,strengths
+follow_up,What steps are you taking to achieve these goals,goals
+follow_up,What skills do you need to develop for your goals,goals
+follow_up,How do you measure progress towards your goals,goals
+follow_up,What research have you done about our company,company
+follow_up,How do you align with our company values,company
+follow_up,What excites you most about our industry,company
+follow_up,Give me an example of a challenging situation you handled,stress
+follow_up,How do you maintain work-life balance,stress
+follow_up,What strategies do you use to stay calm under pressure,stress
+follow_up,Can you provide more details about that difficult project,project
+follow_up,What was your role in the project's success,project
+follow_up,What would you do differently in that project now,project
+follow_up,How do you stay motivated during routine tasks,motivation
+follow_up,What achievements are you most proud of,motivation
+follow_up,How do you motivate team members,motivation
+follow_up,Tell me about a successful team collaboration,teamwork
+follow_up,How do you handle disagreements with colleagues,teamwork
+follow_up,What makes a team successful in your opinion,teamwork
+follow_up,What have you learned from your mistakes,experience
+follow_up,How do you apply past experiences to new situations,experience
+follow_up,What's the most important lesson you've learned,experience
+follow_up,How do you delegate responsibilities,leadership
+follow_up,How do you develop team members,leadership
+follow_up,How do you handle underperforming team members,leadership
+follow_up,How do you track project progress,task_management
+follow_up,What tools do you use to stay organized,task_management
+follow_up,How do you handle scope changes,task_management
+follow_up,How do you approach complex problems,problem_solving
+follow_up,Tell me about a creative solution you developed,problem_solving
+follow_up,How do you stay updated with industry trends,learning
+follow_up,What was the last thing you learned,learning

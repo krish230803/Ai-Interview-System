@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Interview - AI Interview Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .interview-header {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            border-radius: 0 0 30px 30px;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .interview-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .progress {
+            height: 12px;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .question-box {
+            background-color: #ffffff;
+            border: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .audio-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .audio-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .audio-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .audio-btn i {
+            font-size: 1.25rem;
+        }
+        
+        .record-btn {
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            color: white;
+            border: none;
+        }
+        
+        .record-btn:hover {
+            box-shadow: 0 4px 12px rgba(142, 84, 233, 0.3);
+        }
+        
+        .stop-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+        }
+        
+        .stop-btn:hover {
+            background-color: #c82333;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+        
+        .play-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+        
+        .play-btn:hover {
+            background-color: #218838;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+        
+        .submit-btn {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+        }
+        
+        .submit-btn:hover {
+            background-color: #138496;
+            box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+        }
+        
+        .audio-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        .audio-status i {
+            font-size: 1.25rem;
+        }
+        
+        .recording-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #dc3545;
+            font-weight: 500;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .recording-indicator i {
+            font-size: 1.25rem;
+        }
+        
+        .audio-wave {
+            height: 100px;
+            width: 100%;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .wave-bar {
+            width: 4px;
+            height: 20px;
+            margin: 0 2px;
+            background-color: #4776E6;
+            border-radius: 2px;
+            animation: wave 0.5s infinite ease-in-out alternate;
+        }
+        
+        @keyframes wave {
+            0% {
+                height: 20px;
+            }
+            100% {
+                height: 60px;
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        
+        .dashboard-card {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-card-header {
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            color: white;
+            padding: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .dashboard-card-body {
+            padding: 1.5rem;
+        }
+        
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 20px rgba(71, 118, 230, 0.3);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 12px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .response-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .sentiment-positive {
+            color: #43a047;
+        }
+        
+        .sentiment-neutral {
+            color: #fb8c00;
+        }
+        
+        .sentiment-negative {
+            color: #e53935;
+        }
+        
+        #speaking-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: pulse 1.5s infinite;
+        }
+        
+        #speaking-indicator i {
+            font-size: 1.25rem;
+        }
+        
+        #replay-question-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+        
+        #replay-question-btn:hover {
+            background-color: #5a6268;
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">AI Interview Assistant</a>
+            <div class="d-flex align-items-center">
+                <span class="me-3 d-none d-md-inline" id="user-email"></span>
+                <a href="dashboard.html" class="btn btn-outline-primary me-3">
+                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                </a>
+                <button class="btn btn-outline-danger" onclick="handleLogout()">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Interview Header -->
+    <div class="interview-header">
+        <div class="container">
+            <h2 class="interview-title">Audio Interview Session</h2>
+        <!-- Interview Progress -->
+            <div class="progress">
+            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                 role="progressbar" style="width: 0%;" 
+                 aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                0/10 Questions
+                </div>
+            </div>
+            </div>
+        </div>
+
+    <div class="container">
+        <!-- Interview Section -->
+        <div id="interview-section" class="card p-4 border-0 shadow-sm">
+            <div id="interview-container">
+                <div id="question-container" class="mb-4">
+                    <h5 class="mb-3 fw-bold">Current Question:</h5>
+                    <div class="question-box p-4 rounded">
+                        <div id="loading-spinner" class="text-center" style="display: none;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <p id="question-text" class="lead mb-0">Loading your first question...</p>
+                        <div id="speaking-indicator" class="mt-2 text-primary" style="display: none;">
+                            <i class="bi bi-soundwave"></i> <small>Speaking...</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="recording-status" class="audio-status" style="display: none;">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Click "Start Recording" to begin your answer.</span>
+                </div>
+                
+                <div id="recording-indicator" class="recording-indicator" style="display: none;">
+                    <i class="bi bi-record-circle-fill"></i>
+                    <span>Recording in progress...</span>
+                </div>
+                
+                <div id="audio-wave" class="audio-wave" style="display: none;">
+                    <div class="wave-bar" style="animation-delay: 0s;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.1s;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.2s;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.3s;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.4s;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.5s;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.6s;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.7s;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.8s;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.9s;"></div>
+                    </div>
+                
+                <div class="audio-controls">
+                    <button id="start-recording-btn" class="btn audio-btn record-btn">
+                            <i class="bi bi-mic-fill"></i> Start Recording
+                        </button>
+                    <button id="stop-recording-btn" class="btn audio-btn stop-btn" style="display: none;">
+                            <i class="bi bi-stop-fill"></i> Stop Recording
+                        </button>
+                    <button id="play-audio-btn" class="btn audio-btn play-btn" style="display: none;">
+                            <i class="bi bi-play-fill"></i> Play Recording
+                        </button>
+                    <button id="submit-answer-btn" class="btn audio-btn submit-btn" disabled>
+                        <i class="bi bi-send-fill"></i> Submit Answer
+                        </button>
+                    <button id="replay-question-btn" class="btn audio-btn">
+                        <i class="bi bi-volume-up-fill"></i> Replay Question
+                        </button>
+                </div>
+
+                <div id="status-container" class="mt-3 alert" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section (Initially Hidden) -->
+        <div id="dashboard-section" style="display: none;">
+            <div class="text-center my-5">
+                <h2 class="fw-bold mb-3">Interview Complete!</h2>
+                <p class="text-muted mb-5">Here's how you performed in this interview session.</p>
+            </div>
+            
+            <!-- Overall Score -->
+            <div class="row mb-5">
+                <div class="col-md-4 mb-4">
+                    <div class="dashboard-card h-100">
+                        <div class="dashboard-card-header">
+                            Overall Performance
+                        </div>
+                        <div class="dashboard-card-body text-center">
+                            <div class="score-circle mb-3">
+                                <span id="overall-score">0.0</span>
+                            </div>
+                            <p class="text-muted">Out of 5.0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 mb-4">
+                    <div class="dashboard-card h-100">
+                        <div class="dashboard-card-header">
+                            Key Metrics
+                        </div>
+                        <div class="dashboard-card-body">
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <div class="stat-item">
+                                        <div class="stat-value" id="avg-length">0</div>
+                                        <div class="stat-label">Avg. Words</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-item">
+                                        <div class="stat-value" id="total-questions">10</div>
+                                        <div class="stat-label">Questions</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-item">
+                                        <div class="stat-value" id="completion-time">0</div>
+                                        <div class="stat-label">Minutes</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row mb-5">
+                <div class="col-md-6 mb-4">
+                    <div class="dashboard-card h-100">
+                        <div class="dashboard-card-header">
+                            Sentiment Distribution
+                        </div>
+                        <div class="dashboard-card-body">
+                            <canvas id="sentiment-chart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="dashboard-card h-100">
+                        <div class="dashboard-card-header">
+                            Response Scores
+                        </div>
+                        <div class="dashboard-card-body">
+                            <canvas id="scores-chart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Responses -->
+            <div class="dashboard-card mb-5">
+                <div class="dashboard-card-header">
+                    Detailed Responses
+                </div>
+                <div class="dashboard-card-body">
+                    <div id="detailed-responses" class="table-responsive">
+                        <table class="table table-hover response-table">
+                            <thead>
+                                <tr>
+                                    <th>Question</th>
+                                    <th>Response</th>
+                                    <th>Sentiment</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="responses-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="text-center mb-5">
+                <a href="index.html#interview-modes" class="btn btn-primary btn-lg me-3" onclick="handleStartNewInterview(event)">
+                    <i class="bi bi-play-circle-fill me-2"></i> Start New Interview
+                </a>
+                <a href="dashboard.html" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-speedometer2 me-2"></i> Go to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'http://localhost:5000';
+        
+        // Common fetch options for all API calls
+        const fetchOptions = {
+            credentials: 'include',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        };
+        
+        // Add authentication check
+        async function checkAuth() {
+            try {
+                const response = await fetch('http://localhost:5000/auth/me', {
+                    credentials: 'include'
+                });
+                if (!response.ok) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                const data = await response.json();
+                document.getElementById('user-email').textContent = data.user.name; // This is correct as user-email displays the name in the navbar
+            } catch (error) {
+                console.error('Error checking auth:', error);
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Initialize variables
+        let mediaRecorder;
+        let audioChunks = [];
+        let audioBlob;
+        let audioUrl;
+        let audioElement;
+        let sessionId = null;
+        let originalSessionId = null; // Store the initial session ID for persistence
+        let currentQuestion = '';
+        let questionNumber = 0;
+        let isSubmitting = false;
+        let isRecording = false;
+        
+        // Get DOM elements
+        const startRecordingBtn = document.getElementById('start-recording-btn');
+        const stopRecordingBtn = document.getElementById('stop-recording-btn');
+        const playAudioBtn = document.getElementById('play-audio-btn');
+        const submitAnswerBtn = document.getElementById('submit-answer-btn');
+        const recordingStatus = document.getElementById('recording-status');
+        const recordingIndicator = document.getElementById('recording-indicator');
+        const audioWave = document.getElementById('audio-wave');
+        const questionText = document.getElementById('question-text');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const progressBar = document.getElementById('progress-bar');
+        
+        // Function to show loading state
+        function showLoading() {
+            if (loadingSpinner) loadingSpinner.style.display = 'block';
+            if (questionText) questionText.style.opacity = '0.5';
+        }
+        
+        // Function to hide loading state
+        function hideLoading() {
+            if (loadingSpinner) loadingSpinner.style.display = 'none';
+            if (questionText) questionText.style.opacity = '1';
+        }
+        
+        // Function to update progress
+        function updateProgress(questionNum) {
+            if (progressBar) {
+                const progress = (questionNum / 10) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressBar.setAttribute('aria-valuenow', progress);
+                progressBar.textContent = `${questionNum}/10 Questions`;
+            }
+        }
+        
+        // Function to update status
+        function updateStatus(message, type = 'info') {
+            const statusContainer = document.getElementById('status-container');
+            if (statusContainer) {
+                statusContainer.textContent = message;
+                statusContainer.className = `mt-3 alert alert-${type}`;
+                statusContainer.style.display = 'block';
+            }
+        }
+        
+        // Function to hide status
+        function hideStatus() {
+            const statusContainer = document.getElementById('status-container');
+            if (statusContainer) {
+                statusContainer.style.display = 'none';
+            }
+        }
+        
+        // Function to get the first question
+        async function getFirstQuestion() {
+            try {
+                showLoading();
+                // Get the interview mode from localStorage (default to audio)
+                const interviewMode = localStorage.getItem('interviewMode') || 'audio';
+                
+                // Clear any previous session data
+                localStorage.removeItem('lastInterviewSession');
+                localStorage.removeItem('lastInterviewData');
+                localStorage.removeItem('lastFullInterviewData');
+                
+                console.log('Starting new audio interview...');
+                
+                const response = await fetch(`${API_BASE_URL}/interview/start?mode=${interviewMode}`, {
+                    ...fetchOptions,
+                    method: 'GET'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to start interview');
+                }
+
+                const data = await response.json();
+                console.log('Session started, response data:', data);
+                
+                // Get session ID with validation
+                if (!data.session_id && !data.id) {
+                    console.warn('No session ID returned from server, generating temporary ID');
+                    sessionId = 'temp-' + Date.now();
+                } else {
+                    sessionId = data.session_id || data.id;
+                    console.log('Got valid session ID from server:', sessionId);
+                }
+                
+                // Save the original session ID to ensure we don't lose it
+                originalSessionId = sessionId;
+                console.log('Saving original session ID:', originalSessionId);
+                
+                // Store the session ID even before completion
+                localStorage.setItem('lastInterviewSession', sessionId.toString());
+                console.log('Stored session ID in localStorage:', sessionId);
+                
+                // Store initial session data
+                const initialSessionData = {
+                    id: sessionId,
+                    start_time: new Date().toISOString(),
+                    interview_mode: interviewMode,
+                    completed: false
+                };
+                localStorage.setItem('lastInterviewData', JSON.stringify(initialSessionData));
+                
+                currentQuestion = data.next_question;
+                questionNumber = data.question_number;
+
+                questionText.textContent = currentQuestion;
+                updateProgress(questionNumber);
+                hideLoading();
+                recordingStatus.style.display = 'flex';
+                
+                // Store the window start time for tracking interview duration
+                window.startTime = new Date();
+                
+                // Speak the question out loud
+                speakQuestion(currentQuestion);
+            } catch (error) {
+                console.error('Error getting first question:', error);
+                updateStatus('Failed to start interview. Please try refreshing the page.', 'danger');
+                hideLoading();
+            }
+        }
+
+        // Initialize page with auth check and first question
+        async function initializePage() {
+            try {
+            await checkAuth();
+                console.log('Auth check completed');
+                
+                // Setup replay question button
+                const replayBtn = document.getElementById('replay-question-btn');
+                if (replayBtn) {
+                    replayBtn.addEventListener('click', function() {
+                        if (currentQuestion) {
+                            speakQuestion(currentQuestion);
+                        }
+                    });
+                }
+                
+                // Setup audio recording
+                setupAudioRecording();
+                console.log('Audio recording setup completed');
+            
+            // Add completion time calculation
+            window.startTime = new Date();
+            
+                // Get first question
+                await getFirstQuestion();
+                console.log('First question loaded');
+            } catch (error) {
+                console.error('Error during initialization:', error);
+                updateStatus('Failed to initialize the interview. Please refresh the page.', 'danger');
+            }
+        }
+
+        // Start initialization when the page loads
+        document.addEventListener('DOMContentLoaded', initializePage);
+        
+        // Function to speak the question using text-to-speech
+        function speakQuestion(text) {
+            // Check if the browser supports speech synthesis
+            if ('speechSynthesis' in window) {
+                // Create a new speech synthesis utterance
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // Set properties for the voice
+                utterance.lang = 'en-US';
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                
+                // Show speaking indicator
+                const speakingIndicator = document.getElementById('speaking-indicator');
+                speakingIndicator.style.display = 'block';
+                
+                // Handle speech end
+                utterance.onend = function() {
+                    speakingIndicator.style.display = 'none';
+                };
+                
+                // Get available voices
+                let voices = window.speechSynthesis.getVoices();
+                
+                // If voices aren't loaded yet, wait for them
+                if (voices.length === 0) {
+                    // Add an event listener for when voices are loaded
+                    window.speechSynthesis.onvoiceschanged = function() {
+                        voices = window.speechSynthesis.getVoices();
+                        setVoiceAndSpeak();
+                    };
+                } else {
+                    setVoiceAndSpeak();
+                }
+                
+                function setVoiceAndSpeak() {
+                    // Try to find a good voice
+                    const preferredVoice = voices.find(voice => 
+                        voice.name.includes('Google') || 
+                        voice.name.includes('Microsoft') || 
+                        voice.name.includes('Female'));
+                    
+                    if (preferredVoice) {
+                        utterance.voice = preferredVoice;
+                    }
+                    
+                    // Speak the text
+                    window.speechSynthesis.cancel(); // Cancel any ongoing speech
+                    window.speechSynthesis.speak(utterance);
+                    
+                    console.log('Speaking question:', text);
+                }
+            } else {
+                console.warn('Text-to-speech not supported in this browser');
+            }
+        }
+        
+        // Function to show dashboard with basic stats
+        function showDashboard(result) {
+            try {
+                // Store session ID for later use
+                localStorage.setItem('lastInterviewSession', result.session_id);
+                
+                // Hide interview section and show dashboard section
+                document.getElementById('interview-section').style.display = 'none';
+                document.getElementById('dashboard-section').style.display = 'block';
+                
+                // Calculate completion time
+                const endTime = new Date();
+                const timeDiff = Math.round((endTime - window.startTime) / 60000); // in minutes
+                
+                // Update dashboard stats
+                document.getElementById('overall-score').textContent = result.total_score.toFixed(1);
+                document.getElementById('avg-length').textContent = Math.round(result.avg_words || 0);
+                document.getElementById('total-questions').textContent = result.responses.length;
+                document.getElementById('completion-time').textContent = timeDiff;
+                
+                // Update responses table
+                const tbody = document.getElementById('responses-table-body');
+                tbody.innerHTML = ''; // Clear existing rows
+                
+                result.responses.forEach((response, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${response.question_text || `Question ${index + 1}`}</td>
+                        <td>${response.response_text || 'No response'}</td>
+                        <td class="sentiment-${response.sentiment?.toLowerCase() || 'neutral'}">
+                            ${response.sentiment || 'Neutral'}
+                        </td>
+                        <td>${(response.score || 0).toFixed(1)}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                // Create charts if Chart.js is available
+                if (typeof Chart !== 'undefined') {
+                    // Create sentiment distribution chart
+                    const sentiments = result.responses.map(r => r.sentiment || 'Neutral');
+                    const sentimentCounts = {
+                        'Positive': sentiments.filter(s => s === 'Positive').length,
+                        'Neutral': sentiments.filter(s => s === 'Neutral').length,
+                        'Negative': sentiments.filter(s => s === 'Negative').length
+                    };
+                    
+                    new Chart(document.getElementById('sentiment-chart'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: Object.keys(sentimentCounts),
+                            datasets: [{
+                                data: Object.values(sentimentCounts),
+                                backgroundColor: [
+                                    '#43a047',  // Positive
+                                    '#fb8c00',  // Neutral
+                                    '#e53935'   // Negative
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Create scores chart
+                    const scores = result.responses.map(r => r.score || 0);
+                    const labels = result.responses.map((_, i) => `Q${i + 1}`);
+                    
+                    new Chart(document.getElementById('scores-chart'), {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Response Scores',
+                                data: scores,
+                                borderColor: '#4776E6',
+                                tension: 0.1,
+                                fill: false
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 5,
+                                    ticks: {
+                                        stepSize: 1
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error showing dashboard:', error);
+                updateStatus('Error displaying results. Please check the dashboard for your performance.', 'warning');
+            }
+        }
+        
+        // Setup audio recording
+        function setupAudioRecording() {
+            // Start recording button
+            startRecordingBtn.addEventListener('click', async () => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+                    
+                    mediaRecorder.onstop = () => {
+                        audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        audioUrl = URL.createObjectURL(audioBlob);
+                        
+                        if (!audioElement) {
+                            audioElement = new Audio();
+                        }
+                        
+                        audioElement.src = audioUrl;
+                        playAudioBtn.style.display = 'block';
+                        submitAnswerBtn.disabled = false;
+                        
+                        recordingIndicator.style.display = 'none';
+                        audioWave.style.display = 'none';
+                        updateStatus('Recording saved. You can play it back or submit your answer.', 'success');
+                    };
+                    
+                    mediaRecorder.start();
+                    isRecording = true;
+                    
+                    startRecordingBtn.style.display = 'none';
+                    stopRecordingBtn.style.display = 'block';
+                    recordingStatus.style.display = 'none';
+                    recordingIndicator.style.display = 'flex';
+                    audioWave.style.display = 'flex';
+                    
+                    updateStatus('Recording started. Speak clearly into your microphone.', 'info');
+                } catch (error) {
+                    console.error('Error starting recording:', error);
+                    updateStatus('Failed to access microphone. Please check your permissions.', 'danger');
+                }
+            });
+            
+            // Stop recording button
+            stopRecordingBtn.addEventListener('click', () => {
+                if (mediaRecorder && isRecording) {
+                    mediaRecorder.stop();
+                    isRecording = false;
+                    
+                    stopRecordingBtn.style.display = 'none';
+                    startRecordingBtn.style.display = 'block';
+                    startRecordingBtn.textContent = 'Record Again';
+                }
+            });
+            
+            // Play audio button
+            playAudioBtn.addEventListener('click', () => {
+                if (audioElement) {
+                    audioElement.play();
+                }
+            });
+            
+            // Submit answer button
+            submitAnswerBtn.addEventListener('click', async () => {
+                if (isSubmitting || !audioBlob) return;
+                
+                isSubmitting = true;
+                submitAnswerBtn.disabled = true;
+                
+                try {
+                    showLoading();
+                    
+                    const formData = new FormData();
+                    formData.append('audio', audioBlob, 'recording.wav');
+                    
+                    // Ensure session ID is valid and is sent as a string
+                    if (!sessionId) {
+                        console.warn('No session ID available for submission, using original or temporary ID');
+                        sessionId = originalSessionId || ('temp-' + Date.now());
+                    }
+                    
+                    // Debug info about the current state
+                    console.log('Current sessionId:', sessionId);
+                    console.log('Original sessionId:', originalSessionId);
+                    
+                    // Always log if we have a mismatch between current and original session ID
+                    if (sessionId !== originalSessionId) {
+                        console.warn('Session ID mismatch! Current:', sessionId, 'Original:', originalSessionId);
+                        // Prioritize the original session ID if available
+                        if (originalSessionId) {
+                            console.log('Restoring original session ID for submission');
+                            sessionId = originalSessionId;
+                        }
+                    }
+                    
+                    // Log submission details for debugging
+                    console.log('Submitting audio response with session ID:', sessionId);
+                    console.log('Question number:', questionNumber);
+                    console.log('Current question:', currentQuestion);
+                    
+                    formData.append('session_id', sessionId.toString());
+                    formData.append('question_number', questionNumber.toString());
+                    formData.append('current_question', currentQuestion);
+                    
+                    // Store the full question text to ensure it displays properly on performance page
+                    // This helps prevent generic "Question" text on the performance page
+                    const questionData = {
+                        session_id: sessionId,
+                        question_number: questionNumber,
+                        question_text: currentQuestion,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    // Save the question data in localStorage for retrieval by performance page
+                    let interviewQuestions = JSON.parse(localStorage.getItem(`interview_questions_${sessionId}`) || '[]');
+                    interviewQuestions.push(questionData);
+                    localStorage.setItem(`interview_questions_${sessionId}`, JSON.stringify(interviewQuestions));
+                    
+                    // Add additional metadata to help server processing
+                    formData.append('interview_mode', 'audio');
+                    formData.append('client_timestamp', new Date().toISOString());
+                    
+                    const response = await fetch(`${API_BASE_URL}/interview/submit-audio`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Failed to submit audio response: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('Audio submission response:', data);
+                    
+                    if (data.completed) {
+                        // Log the entire response data for debugging
+                        console.log('Interview completed. Full response data:', data);
+                        
+                        // IMPORTANT: Prioritize using the original session ID that we got at the start
+                        // This is the most reliable source of the correct session ID
+                        let finalSessionId = originalSessionId || sessionId;
+                        console.log('Using original interview session ID:', finalSessionId);
+                        
+                        // Only try to get ID from response as fallback if our original ID is missing
+                        if (!finalSessionId) {
+                            console.warn('Original session ID missing, trying to extract from response');
+                            
+                            // First check if it's in the expected location in data.stats.id
+                            if (data.stats && data.stats.id) {
+                                finalSessionId = data.stats.id;
+                                console.log('Found session ID in data.stats.id:', finalSessionId);
+                            } 
+                            // Then check other possible locations
+                            else if (data.stats && data.stats.session_id) {
+                                finalSessionId = data.stats.session_id;
+                                console.log('Found session ID in data.stats.session_id:', finalSessionId);
+                            } 
+                            else if (data.session_id) {
+                                finalSessionId = data.session_id;
+                                console.log('Found session ID in data.session_id:', finalSessionId);
+                            }
+                            else if (data.id) {
+                                finalSessionId = data.id;
+                                console.log('Found session ID in data.id:', finalSessionId);
+                            }
+                            
+                            // If we still don't have a valid ID, create a fallback as last resort
+                            if (!finalSessionId) {
+                                finalSessionId = 'fallback-' + Date.now();
+                                console.warn('No valid session ID found, using fallback:', finalSessionId);
+                            }
+                        }
+                        
+                        // Create a properly structured session object
+                        const sessionData = {
+                            id: finalSessionId,
+                            start_time: data.stats?.start_time || data.start_time || new Date().toISOString(),
+                            total_score: data.stats?.average_score || data.average_score || 0,
+                            interview_mode: 'audio',
+                            completed: true,
+                            audio_responses: []
+                        };
+                        
+                        // Ensure ID is not undefined or null (VERY important)
+                        if (sessionData.id === undefined || sessionData.id === null) {
+                            console.error('Session ID is invalid (undefined/null), using failsafe ID');
+                            sessionData.id = String(Date.now());
+                        }
+                        
+                        // If we have detailed responses, add them as audio_responses
+                        if (data.stats?.detailed_responses && Array.isArray(data.stats.detailed_responses)) {
+                            sessionData.audio_responses = data.stats.detailed_responses.map(resp => {
+                                // Get the question text from our stored questions if available
+                                let interviewQuestions = JSON.parse(localStorage.getItem(`interview_questions_${finalSessionId}`) || '[]');
+                                let questionMatch = interviewQuestions.find(q => q.question_number == resp.question_number);
+                                
+                                return {
+                                    question: questionMatch?.question_text || resp.question || 'Question',
+                                    clarity: resp.clarity || 0,
+                                    duration: resp.duration || 0,
+                                    engagement: resp.engagement || 0,
+                                    sentiment: resp.sentiment || 'Neutral',
+                                    score: resp.score || 0
+                                };
+                            });
+                        }
+                        
+                        // Store both the session ID and the full properly structured session data
+                        // Ensure sessionData.id is a string
+                        const sessionIdString = String(sessionData.id);
+                        console.log('Final session ID being stored and used for redirect:', sessionIdString);
+                        
+                        localStorage.setItem('lastInterviewSession', sessionIdString);
+                        localStorage.setItem('lastInterviewData', JSON.stringify(sessionData));
+                        localStorage.setItem('lastFullInterviewData', JSON.stringify(sessionData));
+                        console.log('Stored session data in localStorage:', sessionData);
+
+                        // Ensure the redirect URL is properly constructed
+                        const performanceUrl = new URL('audio-performance.html', window.location.href);
+                        performanceUrl.searchParams.set('session', sessionIdString);
+                        
+                        console.log('Redirecting to:', performanceUrl.href);
+                        // Add a small delay to ensure localStorage is updated
+                        setTimeout(() => {
+                            window.location.href = performanceUrl.href;
+                        }, 200); // Increased delay to ensure storage is complete
+                    } else {
+                        // Reset for next question
+                        currentQuestion = data.next_question;
+                        questionNumber = data.question_number;
+                        
+                        questionText.textContent = currentQuestion;
+                        updateProgress(questionNumber);
+                        
+                        // Reset audio controls
+                        audioBlob = null;
+                        audioUrl = null;
+                        if (audioElement) {
+                            audioElement.src = '';
+                        }
+                        
+                        playAudioBtn.style.display = 'none';
+                        startRecordingBtn.style.display = 'block';
+                        startRecordingBtn.textContent = 'Start Recording';
+                        recordingStatus.style.display = 'flex';
+                        submitAnswerBtn.disabled = true;
+                        
+                        updateStatus('Answer submitted successfully. Please record your next response.', 'success');
+                        
+                        // Speak the next question
+                        speakQuestion(currentQuestion);
+                    }
+                    
+                    hideLoading();
+                } catch (error) {
+                    console.error('Error submitting audio:', error);
+                    updateStatus('Failed to submit audio. Please try again.', 'danger');
+                    hideLoading();
+                } finally {
+                    isSubmitting = false;
+                    submitAnswerBtn.disabled = false;
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

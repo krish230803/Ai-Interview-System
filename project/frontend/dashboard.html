@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Interview Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .dashboard-header {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            border-radius: 0 0 30px 30px;
+            padding: 3rem 0 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .dashboard-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        .profile-card {
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-header {
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            color: white;
+            padding: 1.5rem;
+        }
+        
+        .profile-info {
+            padding: 1.5rem;
+        }
+        
+        .profile-info p {
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .profile-info strong {
+            color: #2c3e50;
+        }
+        
+        .history-card {
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .history-header {
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            color: white;
+            padding: 1.5rem;
+        }
+        
+        .history-body {
+            padding: 1.5rem;
+            max-height: 800px;
+            overflow: hidden;
+        }
+        
+        .table-responsive {
+            border-radius: 8px;
+            overflow: auto;
+            max-height: 700px;
+            scrollbar-width: thin;
+            scrollbar-color: #4776E6 #f0f0f0;
+        }
+        
+        .table-responsive::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+        
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            border-radius: 4px;
+        }
+        
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(90deg, #3665d5 0%, #7d43d8 100%);
+        }
+        
+        .history-table {
+            margin-bottom: 0;
+        }
+        
+        .history-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            padding: 1rem;
+        }
+        
+        .history-table td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        .history-table tbody tr {
+            transition: all 0.2s ease;
+        }
+        
+        .history-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .stats-card {
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .stats-header {
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            color: white;
+            padding: 1.5rem;
+        }
+        
+        .stats-body {
+            padding: 1.5rem;
+        }
+        
+        .stat-box {
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-box h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-box p {
+            color: #6c757d;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+        
+        .action-btn {
+            padding: 1rem 2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .action-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Styles for the action buttons in the table */
+        .action-btn-group .btn {
+            padding: 0.25rem 0.5rem;
+            margin: 0;
+            border-radius: 0;
+        }
+        
+        .action-btn-group .btn:first-child {
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .action-btn-group .btn:last-child {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .action-btn-group .btn:not(:last-child) {
+            margin-right: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 2rem 0 1.5rem;
+            }
+            
+            .dashboard-title {
+                font-size: 1.75rem;
+            }
+            
+            .dashboard-subtitle {
+                font-size: 1rem;
+            }
+            
+            .stat-box h3 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">AI Interview Assistant</a>
+            <div class="d-flex align-items-center">
+                <span class="me-3 d-none d-md-inline" id="user-email"></span>
+                <button class="btn btn-outline-danger" id="logout-btn">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="container">
+            <h1 class="dashboard-title">Your Dashboard</h1>
+            <p class="dashboard-subtitle">Track your progress and improve your interview skills</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- User Profile and Interview History Row -->
+        <div class="row mb-5">
+            <!-- User Profile Card -->
+            <div class="col-lg-4 mb-4">
+                <div class="profile-card shadow-sm h-100">
+                    <div class="profile-header">
+                        <h5 class="mb-0">User Profile</h5>
+                    </div>
+                    <div class="profile-info">
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <p class="mb-0"><strong>Name:</strong> <span id="userName"></span></p>
+                                <button class="btn btn-sm btn-outline-primary" onclick="showEditNameForm()">
+                                    <i class="bi bi-pencil-fill"></i> Edit
+                                </button>
+                            </div>
+                            <div id="editNameForm" style="display: none;" class="mt-3">
+                                <div class="mb-3">
+                                    <input type="text" id="newName" class="form-control" placeholder="Enter new name">
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success" onclick="updateName()">Save</button>
+                                    <button class="btn btn-secondary" onclick="hideEditNameForm()">Cancel</button>
+                                </div>
+                                <div id="nameUpdateMessage" class="alert mt-2" style="display: none;"></div>
+                            </div>
+                        </div>
+                        <p><strong>Email:</strong> <span id="userEmail"></span></p>
+                        <p><strong>Account Created:</strong> <span id="userCreated"></span></p>
+                        <p class="mb-0"><strong>Verification Status:</strong> <span id="verificationStatus" class="badge"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interview History Card -->
+            <div class="col-lg-8 mb-4">
+                <div class="history-card shadow-sm h-100">
+                    <div class="history-header">
+                        <h5 class="mb-0">Interview History</h5>
+                    </div>
+                    <div class="history-body">
+                        <div class="table-responsive">
+                            <table class="table history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Questions</th>
+                                        <th>Score</th>
+                                        <th>Status</th>
+                                        <th>Mode</th>
+                                        <th style="width: 100px; text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="interview-history">
+                                    <!-- Interview history will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Card -->
+        <div class="stats-card shadow-sm mb-5">
+            <div class="stats-header">
+                <h5 class="mb-0">Overall Statistics</h5>
+            </div>
+            <div class="stats-body">
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-box">
+                            <h3 id="total-interviews">0</h3>
+                            <p>Total Interviews</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-box">
+                            <h3 id="avg-score">0.0</h3>
+                            <p>Average Score</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-box">
+                            <h3 id="total-questions">0</h3>
+                            <p>Total Questions</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-box">
+                            <h3 id="completed-interviews">0</h3>
+                            <p>Completed Interviews</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start New Interview Button -->
+        <div class="text-center mb-5">
+            <a href="index.html#interview-modes" class="btn btn-primary btn-lg action-btn" onclick="handleStartNewInterview(event)">
+                <i class="bi bi-play-circle-fill"></i> Start New Interview
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4 text-center text-muted">
+        <div class="container">
+            <p>© 2023 AI Interview Assistant. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Delete Interview Confirmation Modal -->
+    <div class="modal fade" id="deleteInterviewModal" tabindex="-1" aria-labelledby="deleteInterviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteInterviewModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="sessionId" value="">
+                    Are you sure you want to delete this interview? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Interview</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Updated to ensure cross-domain requests work properly
+        const API_BASE_URL = 'http://localhost:5000';  // Backend API server
+        const FRONTEND_URL = 'http://localhost:8000';  // Frontend server
+        
+        // Fetch user data and update profile
+        async function loadUserData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/me`, {
+                    credentials: 'include'
+                });
+                if (!response.ok) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                const data = await response.json();
+                const user = data.user;
+                
+                // Update profile information
+                document.getElementById('user-email').textContent = user.name;
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userCreated').textContent = new Date(user.created_at).toLocaleDateString();
+                const verificationStatus = document.getElementById('verificationStatus');
+                verificationStatus.textContent = user.is_verified ? 'Verified' : 'Unverified';
+                verificationStatus.className = `badge ${user.is_verified ? 'bg-success' : 'bg-warning'}`;
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // Fetch interview history
+        async function loadInterviewHistory(retryCount = 0) {
+            try {
+                // Show loading indicator
+                const historyTable = document.getElementById('interview-history');
+                historyTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2 text-muted">Loading your interview history...</p>
+                        </td>
+                    </tr>
+                `;
+                
+                console.log('Fetching interview history...');
+                const response = await fetch(`${API_BASE_URL}/interview/sessions`, {
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load interview history: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Interview sessions data:', data);
+                
+                historyTable.innerHTML = '';
+                
+                if (data.sessions.length === 0) {
+                    historyTable.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                <i class="bi bi-info-circle me-2"></i>No interview sessions found. Start your first interview!
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let totalScore = 0;
+                let completedCount = 0;
+                let totalQuestions = 0;
+                
+                // Sort sessions by date (newest first)
+                const sortedSessions = data.sessions.sort((a, b) => 
+                    new Date(b.start_time) - new Date(a.start_time)
+                );
+                
+                // Display all sessions
+                sortedSessions.forEach((session, index) => {
+                    const startTime = session.start_time ? new Date(session.start_time).toLocaleDateString() : 'N/A';
+                    const questionCount = session.question_count || 0;
+                    
+                    // Check for consistent stored score from performance page
+                    let sessionScore = session.total_score;
+                    const storedScoreData = localStorage.getItem('interview_score_' + session.id);
+                    
+                    if (storedScoreData) {
+                        try {
+                            const parsedScore = JSON.parse(storedScoreData);
+                            if (parsedScore.total_score) {
+                                // Use the score calculated by the performance page for consistency
+                                console.log(`Using stored score for session ${session.id}:`, parsedScore.total_score);
+                                sessionScore = parsedScore.total_score;
+                            }
+                        } catch (e) {
+                            console.error('Error parsing stored score:', e);
+                        }
+                    }
+                    
+                    // Format the score with one decimal place
+                    const formattedScore = sessionScore ? parseFloat(sessionScore).toFixed(1) : '0.0';
+                    const completed = session.completed || false;
+                    const mode = session.interview_mode === 'audio' ? 'Audio' : 'Text';
+                    
+                    // Validate session ID before creating the view button
+                    const viewButton = session.id 
+                        ? `<button class="btn btn-sm btn-primary" onclick="viewStats(${session.id})" title="View Interview">
+                             <i class="bi bi-bar-chart-fill"></i>
+                           </button>`
+                        : `<button class="btn btn-sm btn-secondary" disabled title="Unavailable">
+                             <i class="bi bi-exclamation-circle"></i>
+                           </button>`;
+                    
+                    // Create delete button
+                    const deleteButton = session.id
+                        ? `<button class="btn btn-sm btn-danger" onclick="confirmDeleteInterview(${session.id})" title="Delete Interview">
+                             <i class="bi bi-trash-fill"></i>
+                           </button>`
+                        : '';
+                    
+                    const row = document.createElement('tr');
+                    row.dataset.sessionId = session.id;
+                    row.innerHTML = `
+                        <td>${startTime}</td>
+                        <td>${questionCount}</td>
+                        <td>${formattedScore}</td>
+                        <td><span class="badge bg-${completed ? 'success' : 'warning'}">
+                            ${completed ? 'Completed' : 'In Progress'}
+                        </span></td>
+                        <td>${mode}</td>
+                        <td style="text-align: center;">
+                            <div class="btn-group btn-group-sm action-btn-group" role="group" aria-label="Interview actions">
+                                ${viewButton}${deleteButton}
+                            </div>
+                        </td>
+                    `;
+                    historyTable.appendChild(row);
+                    
+                    if (completed) {
+                        completedCount++;
+                        totalScore += parseFloat(formattedScore);
+                        totalQuestions += questionCount;
+                    }
+                });
+                
+                // Update statistics
+                document.getElementById('total-interviews').textContent = data.sessions.length;
+                document.getElementById('completed-interviews').textContent = completedCount;
+                document.getElementById('total-questions').textContent = totalQuestions;
+                document.getElementById('avg-score').textContent = 
+                    (completedCount > 0 ? (totalScore / completedCount).toFixed(1) : '0.0');
+                
+            } catch (error) {
+                console.error('Error loading interview history:', error);
+                
+                if (retryCount < 2) {
+                    console.log(`Retrying (${retryCount + 1}/2)...`);
+                    setTimeout(() => loadInterviewHistory(retryCount + 1), 1000);
+                    return;
+                }
+                
+                const historyTable = document.getElementById('interview-history');
+                historyTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Error loading interview history. 
+                            <button class="btn btn-sm btn-outline-primary ms-2" onclick="loadInterviewHistory()">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Retry
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // View interview statistics
+        function viewStats(sessionId) {
+            // Validate sessionId
+            if (!sessionId) {
+                showToast('Error', 'Invalid session ID', 'danger');
+                return;
+            }
+
+            // Set flag indicating navigation from dashboard
+            localStorage.setItem('fromDashboard', 'true');
+            
+            // Get the session data to check the interview mode
+            fetch(`${API_BASE_URL}/interview/session/${sessionId}`, {
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data || !data.interview_mode) {
+                    throw new Error('Invalid session data received');
+                }
+                
+                // Route to appropriate page based on interview mode
+                const targetUrl = data.interview_mode === 'audio' 
+                    ? `audio-performance.html?session=${sessionId}`
+                    : `stats.html?session=${sessionId}`;
+                
+                window.location.href = targetUrl;
+            })
+            .catch(error => {
+                console.error('Error checking session type:', error);
+                showToast('Error', 'Failed to load session details. Please try again.', 'danger');
+            });
+        }
+
+        // Logout handler
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await fetch(`${API_BASE_URL}/auth/logout`, {
+                    credentials: 'include'
+                });
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        });
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            loadInterviewHistory();
+        });
+
+        // Add these new functions for name editing
+        function showEditNameForm() {
+            const currentName = document.getElementById('userName').textContent;
+            document.getElementById('newName').value = currentName;
+            document.getElementById('editNameForm').style.display = 'block';
+            document.getElementById('newName').focus();
+            document.getElementById('newName').select();
+        }
+
+        function hideEditNameForm() {
+            document.getElementById('editNameForm').style.display = 'none';
+            document.getElementById('nameUpdateMessage').style.display = 'none';
+        }
+
+        async function updateName() {
+            const newName = document.getElementById('newName').value.trim();
+            if (!newName) {
+                showNameUpdateMessage('Name cannot be empty', 'danger');
+                return;
+            }
+            
+            // Disable save button during request to prevent multiple submissions
+            const saveButton = document.querySelector('#editNameForm .btn-success');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+            
+            try {
+                // Add timeout to fetch to handle network issues
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                
+                const response = await fetch(`${API_BASE_URL}/auth/update-name`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'  // Explicitly request JSON response
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ name: newName }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('userName').textContent = newName;
+                    document.getElementById('user-email').textContent = newName; // This is correct as user-email displays the name in the navbar
+                    showNameUpdateMessage('Name updated successfully', 'success');
+                    setTimeout(hideEditNameForm, 2000);
+                } else {
+                    // More detailed error handling
+                    const errorText = await response.text();
+                    console.error('Failed to update name. Status:', response.status, 'Response:', errorText);
+                    
+                    // Try to parse error message if possible
+                    let errorMessage = 'Failed to update name';
+                    try {
+                        const errorJson = JSON.parse(errorText);
+                        errorMessage = errorJson.message || errorMessage;
+                    } catch {
+                        errorMessage = errorText || 'Unknown error occurred';
+                    }
+                    
+                    showNameUpdateMessage(errorMessage, 'danger');
+                    showToast('Update Failed', errorMessage, 'danger');
+                }
+            } catch (error) {
+                console.error('Error updating name:', error);
+                
+                let errorMessage = 'Network error. Please check your connection.';
+                if (error.name === 'AbortError') {
+                    errorMessage = 'Request timed out. Please try again.';
+                } else if (error instanceof TypeError) {
+                    errorMessage = 'Unable to connect to server. Check your network.';
+                }
+                
+                showNameUpdateMessage(errorMessage, 'danger');
+                showToast('Network Error', errorMessage, 'danger');
+            } finally {
+                // Re-enable save button
+                saveButton.disabled = false;
+                saveButton.innerHTML = 'Save';
+            }
+        }
+        
+        function showNameUpdateMessage(message, type) {
+            const messageElement = document.getElementById('nameUpdateMessage');
+            messageElement.textContent = message;
+            messageElement.className = `alert alert-${type} mt-2`;
+            messageElement.style.display = 'block';
+        }
+
+        // Add a showToast function to display error messages
+        function showToast(title, message, type = 'info') {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+                toastContainer.style.zIndex = '5';
+                document.body.appendChild(toastContainer);
+            }
+            
+            // Create a unique ID for the toast
+            const toastId = 'toast-' + Date.now();
+            
+            // Create toast HTML
+            const toastHtml = `
+                <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header bg-${type} text-white">
+                        <strong class="me-auto">${title}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            
+            // Add toast to container
+            toastContainer.innerHTML += toastHtml;
+            
+            // Initialize and show the toast
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 5000 });
+            toast.show();
+            
+            // Remove toast after it's hidden
+            toastElement.addEventListener('hidden.bs.toast', function () {
+                toastElement.remove();
+            });
+        }
+
+        // Add a new function to handle interview deletion
+        function confirmDeleteInterview(sessionId) {
+            // Set sessionId in the modal
+            document.getElementById('sessionId').value = sessionId;
+            // Show the modal
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteInterviewModal'));
+            deleteModal.show();
+        }
+
+        // Add a new function to handle the deletion confirmation
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+            const sessionId = document.getElementById('sessionId').value;
+            const deleteUrl = `${API_BASE_URL}/interview/session/${sessionId}`;
+            
+            // Disable the delete button to prevent multiple clicks
+            const deleteButton = document.getElementById('confirmDeleteBtn');
+            deleteButton.disabled = true;
+            deleteButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...';
+            
+            try {
+                console.log(`Attempting to delete interview session ID: ${sessionId}`);
+                console.log(`Delete URL: ${deleteUrl}`);
+                
+                // Try a GET request first to ensure authentication is working
+                try {
+                    const checkResponse = await fetch(`${API_BASE_URL}/auth/me`, {
+                        credentials: 'include'
+                    });
+                    
+                    if (!checkResponse.ok) {
+                        console.error('Authentication check failed before deletion');
+                        showToast('Error', 'Authentication failed. Please log in again.', 'danger');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 2000);
+                        return;
+                    }
+                    
+                    console.log('Authentication successful, proceeding with deletion');
+                } catch (authError) {
+                    console.error('Authentication check error:', authError);
+                }
+                
+                // Send a DELETE request to the server to delete the interview session
+                const response = await fetch(deleteUrl, {
+                    method: 'DELETE',
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log(`Delete response status: ${response.status}`);
+                
+                // Parse the response
+                const responseText = await response.text();
+                console.log('Delete response body text:', responseText);
+                
+                let responseData = null;
+                try {
+                    if (responseText) {
+                        responseData = JSON.parse(responseText);
+                        console.log('Response data:', responseData);
+                    }
+                } catch (jsonError) {
+                    console.log('Response is not valid JSON');
+                }
+
+                if (response.ok) {
+                    // Clean up localStorage data related to this session
+                    localStorage.removeItem(`interview_score_${sessionId}`);
+                    localStorage.removeItem(`interview_questions_${sessionId}`);
+                    localStorage.removeItem(`transformed_data_${sessionId}`);
+                    
+                    // If this was the last interview session, also clean up these items
+                    const lastSession = localStorage.getItem('lastInterviewSession');
+                    if (lastSession === sessionId.toString()) {
+                        localStorage.removeItem('lastInterviewSession');
+                        localStorage.removeItem('lastInterviewData');
+                        localStorage.removeItem('lastFullInterviewData');
+                    }
+                    
+                    // Remove the row from the table
+                    const historyTable = document.getElementById('interview-history');
+                    const row = document.querySelector(`tr[data-session-id="${sessionId}"]`);
+                    if (row) {
+                        row.remove();
+                    }
+
+                    // Reload the interview history to get accurate statistics
+                    loadInterviewHistory();
+
+                    // Show success toast
+                    showToast('Success', 'Interview deleted successfully');
+
+                    // Hide the modal
+                    const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteInterviewModal'));
+                    deleteModal.hide();
+                } else {
+                    // Get error message from response if available
+                    const errorMessage = responseData && responseData.error 
+                        ? responseData.error 
+                        : `Server returned ${response.status}: ${response.statusText}`;
+                        
+                    console.error('Server error:', errorMessage);
+                    
+                    if (response.status === 401) {
+                        showToast('Error', 'You need to log in again to continue.', 'danger');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 2000);
+                    } else if (response.status === 403) {
+                        showToast('Error', 'You are not authorized to delete this interview.', 'danger');
+                    } else if (response.status === 404) {
+                        showToast('Error', 'Interview not found. It may have been already deleted.', 'warning');
+                        // Reload the interview history to get accurate data
+                        loadInterviewHistory();
+                        // Hide the modal
+                        const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteInterviewModal'));
+                        deleteModal.hide();
+                    } else {
+                        showToast('Error', `Failed to delete interview: ${errorMessage}`, 'danger');
+                    }
+                }
+            } catch (error) {
+                console.error('Error deleting interview:', error);
+                showToast('Error', `Failed to delete interview: ${error.message}`, 'danger');
+            } finally {
+                // Re-enable the delete button
+                deleteButton.disabled = false;
+                deleteButton.innerHTML = 'Delete Interview';
+            }
+        });
+    </script>
+</body>
+</html> 

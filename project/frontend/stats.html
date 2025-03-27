@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Stats - AI Interview Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .stats-header {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            border-radius: 0 0 30px 30px;
+            padding: 3rem 0 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stats-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        .dashboard-card {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-card-header {
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            color: white;
+            padding: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .dashboard-card-body {
+            padding: 1.5rem;
+        }
+        
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 20px rgba(71, 118, 230, 0.3);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 12px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .response-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .response-table tbody tr {
+            transition: all 0.2s ease;
+        }
+        
+        .response-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .sentiment-positive {
+            color: #43a047;
+        }
+        
+        .sentiment-neutral {
+            color: #fb8c00;
+        }
+        
+        .sentiment-negative {
+            color: #e53935;
+        }
+        
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feedback-card {
+            border-radius: 12px;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #4776E6;
+        }
+        
+        .feedback-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feedback-title i {
+            color: #4776E6;
+        }
+        
+        .feedback-text {
+            color: #495057;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-header {
+                padding: 2rem 0 1.5rem;
+            }
+            
+            .stats-title {
+                font-size: 1.75rem;
+            }
+            
+            .stats-subtitle {
+                font-size: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">AI Interview Assistant</a>
+            <div class="d-flex align-items-center">
+                <span class="me-3 d-none d-md-inline" id="user-email"></span>
+                <a href="dashboard.html" class="btn btn-outline-primary me-3">
+                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                </a>
+                <button class="btn btn-outline-danger" id="logout-btn">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Stats Header -->
+    <div class="stats-header">
+    <div class="container">
+            <h1 class="stats-title">Interview Session Details</h1>
+            <p class="stats-subtitle">Detailed analysis of your interview performance</p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <a href="dashboard.html" class="btn btn-outline-primary action-btn mb-4">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+        
+        <!-- Session Info -->
+        <div class="row mb-5">
+            <div class="col-md-4 mb-4">
+                <div class="dashboard-card h-100">
+                    <div class="dashboard-card-header">
+                        Overall Performance
+                    </div>
+                    <div class="dashboard-card-body text-center">
+                        <div class="score-circle mb-3">
+                            <span id="overall-score">0.0</span>
+                        </div>
+                        <p class="text-muted">Out of 5.0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 mb-4">
+                <div class="dashboard-card h-100">
+                    <div class="dashboard-card-header">
+                        Session Information
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="stat-item">
+                                    <div class="stat-value" id="session-date">-</div>
+                                    <div class="stat-label">Date</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-item">
+                                    <div class="stat-value" id="question-count">0</div>
+                                    <div class="stat-label">Questions</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-item">
+                                    <div class="stat-value" id="avg-words">0</div>
+                                    <div class="stat-label">Avg. Words</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-4">
+                                <div class="stat-item">
+                                    <div class="stat-value" id="interview-mode">-</div>
+                                    <div class="stat-label">Interview Mode</div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+        <div class="row mb-5">
+            <div class="col-md-6 mb-4">
+                <div class="dashboard-card h-100">
+                    <div class="dashboard-card-header">
+                        Sentiment Distribution
+                    </div>
+                    <div class="dashboard-card-body">
+                        <canvas id="sentiment-chart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="dashboard-card h-100">
+                    <div class="dashboard-card-header">
+                        Response Scores
+                    </div>
+                    <div class="dashboard-card-body">
+                        <canvas id="scores-chart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Chart Row -->
+        <div class="row mb-5">
+            <div class="col-md-6 mb-4">
+                <div class="dashboard-card h-100">
+                    <div class="dashboard-card-header">
+                        Question Categories
+                    </div>
+                    <div class="dashboard-card-body">
+                        <canvas id="categories-chart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="dashboard-card h-100">
+                    <div class="dashboard-card-header">
+                        Performance Metrics
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light p-3 h-100">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                                            <i class="bi bi-stopwatch text-primary fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 text-muted">Response Time</h6>
+                                            <h4 class="mb-0" id="avg-response-time">2.5 min</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light p-3 h-100">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                                            <i class="bi bi-check-circle text-success fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 text-muted">Completion Rate</h6>
+                                            <h4 class="mb-0" id="completion-rate">100%</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light p-3 h-100">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                                            <i class="bi bi-graph-up text-warning fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 text-muted">Improvement</h6>
+                                            <h4 class="mb-0" id="improvement-rate">+15%</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light p-3 h-100">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                                            <i class="bi bi-star text-info fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 text-muted">Top Category</h6>
+                                            <h4 class="mb-0" id="top-category">Technical</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- AI Feedback -->
+        <div class="dashboard-card mb-5">
+            <div class="dashboard-card-header">
+                AI Feedback & Recommendations
+            </div>
+            <div class="dashboard-card-body">
+                <div id="feedback-container">
+                    <div class="feedback-card">
+                        <h5 class="feedback-title"><i class="bi bi-lightbulb-fill"></i> Loading Feedback...</h5>
+                        <p class="feedback-text">Please wait while we analyze your interview responses.</p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Responses -->
+        <div class="dashboard-card mb-5">
+            <div class="dashboard-card-header">
+                Detailed Responses
+            </div>
+            <div class="dashboard-card-body">
+                <div id="detailed-responses" class="table-responsive">
+                    <table class="table table-hover response-table">
+                                <thead>
+                                    <tr>
+                                        <th>Question</th>
+                                        <th>Response</th>
+                                        <th>Sentiment</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                        <tbody id="responses-table-body">
+                            <!-- Responses will be populated here -->
+                                </tbody>
+                            </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4 text-center text-muted">
+        <div class="container">
+            <p>© 2023 AI Interview Assistant. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000';
+        let sessionId;
+        
+        // Fetch user data
+        async function loadUserData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/me`, {
+                    credentials: 'include'
+                });
+                if (!response.ok) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                const data = await response.json();
+                document.getElementById('user-email').textContent = data.user.name; // This is correct as user-email displays the name in the navbar
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                window.location.href = 'login.html';
+            }
+        }
+        
+        // Normalize response data to ensure it has the expected format
+        function normalizeResponseData(data) {
+            if (!data) return null;
+            
+            // Ensure responses array exists
+            if (!data.responses) {
+                data.responses = [];
+            }
+            
+            // Normalize each response
+            data.responses = data.responses.map(response => {
+                const normalizedResponse = { ...response };
+                
+                // Ensure question_text exists
+                if (!normalizedResponse.question_text) {
+                    normalizedResponse.question_text = 'Unknown question';
+                }
+                
+                // Ensure response_text exists
+                if (!normalizedResponse.response_text) {
+                    normalizedResponse.response_text = 'No response provided';
+                }
+                
+                // Normalize sentiment (default to Neutral if missing)
+                if (!normalizedResponse.sentiment) {
+                    normalizedResponse.sentiment = 'Neutral';
+                } else {
+                    // Capitalize first letter for consistency
+                    normalizedResponse.sentiment = 
+                        normalizedResponse.sentiment.charAt(0).toUpperCase() + 
+                        normalizedResponse.sentiment.slice(1).toLowerCase();
+                }
+                
+                // Ensure category exists (default to General if missing)
+                if (!normalizedResponse.category) {
+                    normalizedResponse.category = 'General';
+                }
+                
+                // Ensure score exists
+                if (normalizedResponse.score === undefined || normalizedResponse.score === null) {
+                    normalizedResponse.score = 0;
+                }
+                
+                // Add estimated response time if it doesn't exist
+                if (normalizedResponse.response_time === undefined || normalizedResponse.response_time === null) {
+                    // Estimate response time based on response length
+                    // Assume average typing speed of 40 words per minute (0.67 words per second)
+                    const wordCount = normalizedResponse.response_text.split(' ').length;
+                    // Add thinking time of 10 seconds plus typing time
+                    normalizedResponse.response_time = 10 + (wordCount / 0.67);
+                    normalizedResponse.is_estimated_time = true;
+                }
+                
+                return normalizedResponse;
+            });
+            
+            // Ensure total_score exists
+            if (data.total_score === undefined || data.total_score === null) {
+                if (data.responses.length > 0) {
+                    data.total_score = data.responses.reduce((sum, r) => sum + r.score, 0) / data.responses.length;
+                } else {
+                    data.total_score = 0;
+                }
+            }
+            
+            return data;
+        }
+        
+        // Fetch session data
+        async function loadSessionData() {
+            try {
+                // Get session ID from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                sessionId = urlParams.get('session');
+                
+                if (!sessionId) {
+                    alert('No session ID provided');
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+                
+                const response = await fetch(`${API_BASE_URL}/interview/session/${sessionId}`, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load session data');
+                }
+                
+                const data = await response.json();
+                
+                // Debug: Log the response data structure
+                console.log('Session data received:', data);
+                if (data.responses && data.responses.length > 0) {
+                    console.log('First response structure:', data.responses[0]);
+                    console.log('Sentiment values in responses:', data.responses.map(r => r.sentiment));
+                    console.log('Category values in responses:', data.responses.map(r => r.category));
+                }
+                
+                // Fetch all sessions to find previous sessions for improvement calculation
+                const sessionsResponse = await fetch(`${API_BASE_URL}/interview/sessions`, {
+                    credentials: 'include'
+                });
+                
+                if (sessionsResponse.ok) {
+                    const sessionsData = await sessionsResponse.json();
+                    
+                    // Sort sessions by date (newest first)
+                    const sortedSessions = sessionsData.sessions.sort((a, b) => 
+                        new Date(b.start_time) - new Date(a.start_time)
+                    );
+                    
+                    // Find current session index
+                    const currentSessionIndex = sortedSessions.findIndex(s => s.id == sessionId);
+                    
+                    // If this isn't the first session, get the previous session's score
+                    if (currentSessionIndex !== -1 && currentSessionIndex < sortedSessions.length - 1) {
+                        const previousSession = sortedSessions[currentSessionIndex + 1];
+                        data.previous_score = previousSession.total_score;
+                        console.log('Previous session score:', data.previous_score);
+                    }
+                }
+                
+                // Normalize the data to ensure it has the expected format
+                const normalizedData = normalizeResponseData(data);
+                console.log('Normalized data:', normalizedData);
+                
+                displaySessionData(normalizedData);
+            } catch (error) {
+                console.error('Error loading session data:', error);
+                alert('Failed to load session data. Please try again later.');
+            }
+        }
+        
+        // Display session data
+        function displaySessionData(data) {
+            // Update session info
+            document.getElementById('overall-score').textContent = data.total_score.toFixed(1);
+            document.getElementById('session-date').textContent = new Date(data.start_time).toLocaleDateString();
+            document.getElementById('question-count').textContent = data.responses.length;
+            
+            // Set interview mode with proper capitalization
+            const mode = data.interview_mode || 'text';
+            document.getElementById('interview-mode').textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+            
+            // Calculate average words
+            const totalWords = data.responses.reduce((sum, response) => {
+                return sum + response.response_text.split(' ').length;
+            }, 0);
+            const avgWords = Math.round(totalWords / data.responses.length);
+            document.getElementById('avg-words').textContent = avgWords;
+            
+            // Update performance metrics
+            updatePerformanceMetrics(data);
+            
+            // Populate responses table
+            const tableBody = document.getElementById('responses-table-body');
+            tableBody.innerHTML = '';
+            
+            data.responses.forEach(response => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${response.question_text}</td>
+                    <td>${response.response_text}</td>
+                    <td class="sentiment-${response.sentiment ? response.sentiment.toLowerCase() : 'neutral'}">${response.sentiment || 'Neutral'}</td>
+                    <td>${response.score ? response.score.toFixed(1) : '0.0'}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Create sentiment chart
+            createSentimentChart(data.responses);
+            
+            // Create scores chart
+            createScoresChart(data.responses);
+            
+            // Create categories chart
+            createCategoriesChart(data.responses);
+            
+            // Generate AI feedback
+            generateAIFeedback(data);
+        }
+        
+        // Update performance metrics
+        function updatePerformanceMetrics(data) {
+            // Set completion rate
+            const isCompleted = data.completed === true;
+            const completionRate = isCompleted ? '100%' : 
+                Math.round((data.responses.length / 10) * 100) + '%';
+            document.getElementById('completion-rate').textContent = completionRate;
+            
+            // Calculate total interview time instead of average response time
+            let totalTime = 'N/A';
+            if (data.responses && data.responses.length > 0) {
+                // Check if response_time exists in the data
+                const responseTimes = data.responses
+                    .map(r => r.response_time)
+                    .filter(t => t !== undefined && t !== null);
+                
+                if (responseTimes.length > 0) {
+                    // Calculate total interview time in seconds
+                    const totalTimeInSeconds = responseTimes.reduce((sum, time) => sum + time, 0);
+                    
+                    // Format the time appropriately
+                    if (totalTimeInSeconds < 60) {
+                        totalTime = `${Math.round(totalTimeInSeconds)} sec`;
+                    } else {
+                        const minutes = Math.floor(totalTimeInSeconds / 60);
+                        const seconds = Math.round(totalTimeInSeconds % 60);
+                        totalTime = `${minutes}:${seconds.toString().padStart(2, '0')} min`;
+                    }
+                } else {
+                    // If no response_time data, estimate based on response length
+                    const totalWords = data.responses.reduce((sum, r) => sum + r.response_text.split(' ').length, 0);
+                    // Assume average typing speed of 40 words per minute
+                    const estimatedMinutes = Math.ceil(totalWords / 40);
+                    totalTime = `~${estimatedMinutes} min`;
+                }
+            }
+            document.getElementById('avg-response-time').textContent = totalTime;
+            
+            // Update the label to reflect total time
+            const timeLabel = document.querySelector('.col-md-6:first-child h6.mb-0.text-muted');
+            if (timeLabel) {
+                timeLabel.textContent = 'Total Time';
+            }
+            
+            // Calculate improvement rate based on actual data
+            let improvementRate = 'N/A';
+            
+            // For in-progress interviews, always show "N/A" instead of "In Progress"
+            if (!isCompleted) {
+                improvementRate = 'N/A';
+            } else if (data.previous_score !== undefined && data.previous_score !== null && data.total_score !== undefined) {
+                // Only calculate improvement for completed interviews
+                
+                // Handle edge cases to prevent infinity or extreme percentages
+                if (data.previous_score === 0) {
+                    // If previous score was 0, we can't calculate percentage improvement
+                    // Just show the absolute improvement
+                    improvementRate = data.total_score > 0 ? '+100%' : '0%';
+                } else {
+                    // Calculate percentage improvement from previous session
+                    const improvement = ((data.total_score - data.previous_score) / data.previous_score) * 100;
+                    
+                    // Cap extreme values
+                    if (improvement > 1000) {
+                        improvementRate = '+1000%+';
+                    } else if (improvement < -90) {
+                        // For very negative improvements, show N/A instead of extreme negative values
+                        improvementRate = 'N/A';
+                    } else if (improvement > 0) {
+                        improvementRate = `+${improvement.toFixed(0)}%`;
+                    } else if (improvement < 0) {
+                        improvementRate = `${improvement.toFixed(0)}%`;
+                    } else {
+                        improvementRate = '0%';
+                    }
+                }
+            } else {
+                // If no previous score data, show a default message
+                improvementRate = 'First session';
+            }
+            document.getElementById('improvement-rate').textContent = improvementRate;
+            
+            // Find top category
+            const categories = data.responses
+                .map(r => r.category)
+                .filter(c => c && c.trim() !== '');
+            
+            if (categories.length > 0) {
+                // Count occurrences of each category
+                const categoryCounts = {};
+                categories.forEach(category => {
+                    categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+                });
+                
+                // Find the category with the highest count
+                let topCategory = 'General';
+                let maxCount = 0;
+                
+                for (const [category, count] of Object.entries(categoryCounts)) {
+                    if (count > maxCount) {
+                        maxCount = count;
+                        topCategory = category;
+                    }
+                }
+                
+                document.getElementById('top-category').textContent = topCategory;
+            } else {
+                document.getElementById('top-category').textContent = 'N/A';
+            }
+        }
+        
+        // Create sentiment chart
+        function createSentimentChart(responses) {
+            // Filter out responses with no sentiment and normalize sentiment values
+            const sentiments = responses
+                .map(r => r.sentiment)
+                .filter(s => s)
+                .map(s => {
+                    // Normalize sentiment values (handle different cases)
+                    if (s.toLowerCase() === 'positive') return 'Positive';
+                    if (s.toLowerCase() === 'negative') return 'Negative';
+                    return 'Neutral';
+                });
+            
+            console.log('Sentiment values:', sentiments); // Debug log
+            
+            // Count occurrences of each sentiment
+            const sentimentCounts = {
+                'Positive': 0,
+                'Neutral': 0,
+                'Negative': 0
+            };
+            
+            // Count each sentiment
+            sentiments.forEach(sentiment => {
+                if (sentiment in sentimentCounts) {
+                    sentimentCounts[sentiment]++;
+                } else {
+                    // Default to neutral for unknown sentiments
+                    sentimentCounts['Neutral']++;
+                }
+            });
+            
+            console.log('Sentiment counts:', sentimentCounts); // Debug log
+            
+            // Check if we have any sentiment data
+            const hasSentimentData = Object.values(sentimentCounts).some(count => count > 0);
+            
+            if (!hasSentimentData) {
+                // If no sentiment data, create default data with equal distribution
+                sentimentCounts.Positive = 1;
+                sentimentCounts.Neutral = 1;
+                sentimentCounts.Negative = 1;
+                
+                const ctx = document.getElementById('sentiment-chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(sentimentCounts),
+                        datasets: [{
+                            data: Object.values(sentimentCounts),
+                            backgroundColor: [
+                                '#43a047',  // Positive - green
+                                '#fb8c00',  // Neutral - orange
+                                '#e53935'   // Negative - red
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'No sentiment data available';
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+                
+                // Add a "No data" overlay
+                const chartContainer = document.getElementById('sentiment-chart').parentNode;
+                const overlay = document.createElement('div');
+                overlay.className = 'position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center';
+                overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                overlay.style.zIndex = '10';
+                overlay.innerHTML = '<p class="text-muted">No sentiment data available</p>';
+                chartContainer.style.position = 'relative';
+                chartContainer.appendChild(overlay);
+                
+                return;
+            }
+            
+            const ctx = document.getElementById('sentiment-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(sentimentCounts),
+                    datasets: [{
+                        data: Object.values(sentimentCounts),
+                        backgroundColor: [
+                            '#43a047',  // Positive - green
+                            '#fb8c00',  // Neutral - orange
+                            '#e53935'   // Negative - red
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+        
+        // Create scores chart
+        function createScoresChart(responses) {
+            const questions = responses.map((r, i) => `Q${i+1}`);
+            const scores = responses.map(r => r.score);
+            
+            const ctx = document.getElementById('scores-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: questions,
+                    datasets: [{
+                        label: 'Score',
+                        data: scores,
+                        backgroundColor: 'rgba(71, 118, 230, 0.7)',
+                        borderColor: 'rgba(71, 118, 230, 1)',
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Create categories chart
+        function createCategoriesChart(responses) {
+            // Extract categories from responses
+            const categories = responses
+                .map(r => r.category)
+                .filter(c => c && c.trim() !== '');
+            
+            console.log('Category values:', categories); // Debug log
+            
+            // If no categories are available
+            if (categories.length === 0) {
+                // Create a default chart with placeholder data
+                const defaultCategories = ['Technical', 'Behavioral', 'Experience'];
+                const defaultData = [1, 1, 1];
+                const defaultColors = generateColors(defaultCategories.length);
+                
+                const ctx = document.getElementById('categories-chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: defaultCategories,
+                        datasets: [{
+                            label: 'Number of Questions',
+                            data: defaultData,
+                            backgroundColor: defaultColors,
+                            borderColor: defaultColors,
+                            borderWidth: 1,
+                            borderRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'No category data available';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // Add a "No data" overlay
+                const chartContainer = document.getElementById('categories-chart').parentNode;
+                const overlay = document.createElement('div');
+                overlay.className = 'position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center';
+                overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                overlay.style.zIndex = '10';
+                overlay.innerHTML = '<p class="text-muted">No category data available</p>';
+                chartContainer.style.position = 'relative';
+                chartContainer.appendChild(overlay);
+                
+                return;
+            }
+            
+            // Count occurrences of each category
+            const categoryCounts = {};
+            categories.forEach(category => {
+                categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+            });
+            
+            console.log('Category counts:', categoryCounts); // Debug log
+            
+            // Sort categories by count (descending)
+            const sortedCategories = Object.keys(categoryCounts).sort((a, b) => 
+                categoryCounts[b] - categoryCounts[a]
+            );
+            
+            // Prepare data for chart
+            const categoryLabels = sortedCategories;
+            const categoryData = sortedCategories.map(cat => categoryCounts[cat]);
+            
+            // Generate colors for each category
+            const categoryColors = generateColors(categoryLabels.length);
+            
+            const ctx = document.getElementById('categories-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        label: 'Number of Questions',
+                        data: categoryData,
+                        backgroundColor: categoryColors,
+                        borderColor: categoryColors,
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Helper function to generate colors for categories
+        function generateColors(count) {
+            const baseColors = [
+                'rgba(71, 118, 230, 0.7)',    // Blue
+                'rgba(142, 84, 233, 0.7)',    // Purple
+                'rgba(66, 186, 150, 0.7)',    // Teal
+                'rgba(240, 147, 43, 0.7)',    // Orange
+                'rgba(235, 87, 87, 0.7)',     // Red
+                'rgba(78, 204, 163, 0.7)',    // Green
+                'rgba(130, 88, 159, 0.7)'     // Dark Purple
+            ];
+            
+            // If we have more categories than base colors, generate additional colors
+            if (count <= baseColors.length) {
+                return baseColors.slice(0, count);
+            }
+            
+            const colors = [...baseColors];
+            for (let i = baseColors.length; i < count; i++) {
+                const r = Math.floor(Math.random() * 200 + 55);
+                const g = Math.floor(Math.random() * 200 + 55);
+                const b = Math.floor(Math.random() * 200 + 55);
+                colors.push(`rgba(${r}, ${g}, ${b}, 0.7)`);
+            }
+            
+            return colors;
+        }
+        
+        // Generate AI feedback
+        function generateAIFeedback(data) {
+            const feedbackContainer = document.getElementById('feedback-container');
+            feedbackContainer.innerHTML = '';
+            
+            // Calculate metrics
+            const avgScore = data.total_score;
+            const sentiments = data.responses.map(r => r.sentiment).filter(s => s);
+            const positiveCount = sentiments.filter(s => s === 'Positive').length;
+            const negativeCount = sentiments.filter(s => s === 'Negative').length;
+            const neutralCount = sentiments.filter(s => s === 'Neutral').length;
+            
+            // Overall performance feedback
+            let overallFeedback;
+            if (avgScore >= 4) {
+                overallFeedback = `
+                    <div class="feedback-card">
+                        <h5 class="feedback-title"><i class="bi bi-trophy-fill"></i> Excellent Performance</h5>
+                        <p class="feedback-text">Your overall interview performance was excellent. You demonstrated strong communication skills and provided thoughtful, well-structured responses to most questions. Keep up the great work!</p>
+                    </div>
+                `;
+            } else if (avgScore >= 3) {
+                overallFeedback = `
+                    <div class="feedback-card">
+                        <h5 class="feedback-title"><i class="bi bi-check-circle-fill"></i> Good Performance</h5>
+                        <p class="feedback-text">Your overall interview performance was good. You provided solid answers to most questions, though there's room for improvement in some areas. With some refinement, you can further enhance your interview skills.</p>
+                    </div>
+                `;
+            } else {
+                overallFeedback = `
+                    <div class="feedback-card">
+                        <h5 class="feedback-title"><i class="bi bi-info-circle-fill"></i> Areas for Improvement</h5>
+                        <p class="feedback-text">Your interview performance shows potential, but there are several areas that need improvement. Focus on providing more detailed responses and structuring your answers more effectively.</p>
+                    </div>
+                `;
+            }
+            
+            // Sentiment feedback
+            let sentimentFeedback;
+            if (sentiments.length === 0) {
+                sentimentFeedback = `
+                    <div class="feedback-card">
+                        <h5 class="feedback-title"><i class="bi bi-emoji-neutral-fill"></i> Tone Analysis</h5>
+                        <p class="feedback-text">We couldn't analyze the tone of your responses. Remember that maintaining a positive and enthusiastic tone during interviews can help create a favorable impression.</p>
+                    </div>
+                `;
+            } else if (positiveCount > negativeCount + neutralCount) {
+                sentimentFeedback = `
+                    <div class="feedback-card">
+                        <h5 class="feedback-title"><i class="bi bi-emoji-smile-fill"></i> Positive Tone</h5>
+                        <p class="feedback-text">Your responses conveyed a consistently positive tone, which is excellent. This positive attitude comes across well to interviewers and helps create a favorable impression.</p>
+                    </div>
+                `;
+            } else if (negativeCount > positiveCount) {
+                sentimentFeedback = `
+                    <div class="feedback-card">
+                        <h5 class="feedback-title"><i class="bi bi-emoji-neutral-fill"></i> Watch Your Tone</h5>
+                        <p class="feedback-text">Several of your responses had a negative tone. Try to maintain a more positive or neutral tone even when discussing challenges or difficulties. Frame problems as opportunities for growth.</p>
+                    </div>
+                `;
+            } else {
+                sentimentFeedback = `
+                    <div class="feedback-card">
+                        <h5 class="feedback-title"><i class="bi bi-emoji-neutral-fill"></i> Balanced Tone</h5>
+                        <p class="feedback-text">Your responses showed a mix of positive and neutral tones. While this is generally good, try to incorporate more positive language when appropriate to convey enthusiasm and confidence.</p>
+                    </div>
+                `;
+            }
+            
+            // Response length feedback
+            const avgWords = Math.round(data.responses.reduce((sum, r) => sum + r.response_text.split(' ').length, 0) / data.responses.length);
+            let lengthFeedback;
+            
+            if (avgWords < 50) {
+                lengthFeedback = `
+                    <div class="feedback-card">
+                        <h5 class="feedback-title"><i class="bi bi-chat-text-fill"></i> Response Length</h5>
+                        <p class="feedback-text">Your responses were quite brief, averaging only ${avgWords} words. Try to provide more detailed answers with specific examples to better showcase your skills and experiences.</p>
+                    </div>
+                `;
+            } else if (avgWords > 200) {
+                lengthFeedback = `
+                    <div class="feedback-card">
+                        <h5 class="feedback-title"><i class="bi bi-chat-text-fill"></i> Response Length</h5>
+                        <p class="feedback-text">Your responses were quite lengthy, averaging ${avgWords} words. While detail is good, try to be more concise and focused in your answers to maintain the interviewer's attention.</p>
+                    </div>
+                `;
+            } else {
+                lengthFeedback = `
+                    <div class="feedback-card">
+                        <h5 class="feedback-title"><i class="bi bi-chat-text-fill"></i> Response Length</h5>
+                        <p class="feedback-text">Your response length was well-balanced, averaging ${avgWords} words per answer. This is a good length that provides sufficient detail without being overly verbose.</p>
+                    </div>
+                `;
+            }
+            
+            // Next steps
+            const nextSteps = `
+                <div class="feedback-card">
+                    <h5 class="feedback-title"><i class="bi bi-arrow-right-circle-fill"></i> Next Steps</h5>
+                    <p class="feedback-text">To continue improving your interview skills:</p>
+                    <ul class="mt-2">
+                        <li>Practice the STAR method (Situation, Task, Action, Result) for behavioral questions</li>
+                        <li>Record yourself answering questions to review your tone and delivery</li>
+                        <li>Focus on areas where your scores were lower</li>
+                        <li>Continue practicing with different types of interview questions</li>
+                    </ul>
+                </div>
+            `;
+            
+            // Combine all feedback
+            feedbackContainer.innerHTML = overallFeedback + sentimentFeedback + lengthFeedback + nextSteps;
+        }
+
+        // Logout handler
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await fetch(`${API_BASE_URL}/auth/logout`, {
+                    credentials: 'include'
+                });
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadUserData();
+            await loadSessionData();
+        });
+    </script>
+</body>
+</html> 

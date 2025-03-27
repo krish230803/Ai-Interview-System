@@ -1,0 +1,16 @@
+flask
+flask_sqlalchemy
+flask-cors
+pandas
+scikit-learn
+textblob
+matplotlib
+seaborn
+spacy
+transformers
+torch
+flask-login
+flask-mail
+flask-bcrypt
+itsdangerous
+email-validator
